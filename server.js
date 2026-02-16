@@ -1,31 +1,33 @@
 import express from "express";
-import OpenAI from "openai";
 import cors from "cors";
+import OpenAI from "openai";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+app.get("/", (req, res) => res.send("OK backend running"));
 
-const ASSISTANT_ID = "asistente_2o8VMaRKdQNp4iHAxhS6SGg3";
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// ⚠️ Pega aquí el Assistant ID REAL (normalmente empieza con asst_)
+const ASSISTANT_ID = process.env.ASSISTANT_ID;
 
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
+    if (!message) return res.status(400).json({ error: "Falta message" });
 
-    const response = await client.responses.create({
+    const r = await client.responses.create({
       assistant_id: ASSISTANT_ID,
       input: message
     });
 
-    res.json({ reply: response.output_text });
-
+    res.json({ reply: r.output_text });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err?.message || String(err) });
   }
 });
 
-app.listen(3000);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Listening on", PORT));
