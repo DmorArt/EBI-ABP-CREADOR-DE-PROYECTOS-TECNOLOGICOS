@@ -1,17 +1,76 @@
-<button onclick="testBackend()">Probar conexión</button>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Asistente Docente - Ciencias de la Computación</title>
+  <style>
+    body{font-family:Arial; background:#0f172a; color:white; text-align:center; padding:30px;}
+    #wrap{max-width:820px; margin:0 auto;}
+    #chat{background:#1e293b; padding:18px; border-radius:12px; min-height:320px; text-align:left; overflow:auto;}
+    .msg{margin:10px 0; padding:10px 12px; border-radius:10px; background:#0b1220;}
+    .me{background:#0b2a1a;}
+    .bot{background:#172554;}
+    input{width:70%; padding:10px; border-radius:8px; border:none;}
+    button{padding:10px 16px; border:none; border-radius:8px; background:#22c55e; color:white; cursor:pointer; margin-left:8px;}
+    small{opacity:.8}
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <h1>Asistente Docente (EBI/EMS) – Ciencias de la Computación</h1>
+    <small>Planificación y creación de proyectos tecnológicos (ABP)</small>
+    <div id="chat"></div>
+    <br>
+    <input id="msg" placeholder="Escribe tu consulta..." />
+    <button onclick="send()">Enviar</button>
+    <button onclick="ping()">Probar conexión</button>
+  </div>
 
-<script>
-async function testBackend(){
-  try{
-    const res = await fetch("https://ebi-abp-creador-de-proyectos-tecnologicos.onrender.com/chat",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:"Hola, prueba de conexión"})
-    });
-    const data = await res.json();
-    alert(JSON.stringify(data, null, 2));
-  }catch(e){
-    alert("Error: " + e.message);
-  }
-}
-</script>
+  <script>
+    // ✅ REEMPLAZA ESTA URL cuando tengas la de Render
+    const BACKEND = "https://TU-BACKEND.onrender.com";
+
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("msg");
+
+    function add(text, who){
+      const div = document.createElement("div");
+      div.className = "msg " + who;
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function send(){
+      const message = input.value.trim();
+      if(!message) return;
+      add("Tú: " + message, "me");
+      input.value = "";
+
+      try{
+        const res = await fetch(BACKEND + "/chat",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({message})
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error || "Error desconocido");
+        add("GPT: " + data.reply, "bot");
+      }catch(e){
+        add("Error: " + e.message, "bot");
+      }
+    }
+
+    async function ping(){
+      try{
+        const res = await fetch(BACKEND + "/");
+        const txt = await res.text();
+        alert("Backend dice: " + txt);
+      }catch(e){
+        alert("No conecta con backend: " + e.message);
+      }
+    }
+  </script>
+</body>
+</html>
