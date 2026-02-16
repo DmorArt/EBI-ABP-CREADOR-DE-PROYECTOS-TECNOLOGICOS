@@ -10,7 +10,7 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-const ASSISTANT_ID = "AQUI_IRA_TU_ASSISTANT_ID";
+const ASSISTANT_ID = "asistente_2o8VMaRKdQNp4iHAxhS6SGg3";
 
 app.post("/chat", async (req, res) => {
   try {
