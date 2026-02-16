@@ -1,73 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Asistente Ciencias de la Computación</title>
-
-<style>
-body{
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-  text-align:center;
-  padding:40px;
-}
-
-#chat{
-  width:600px;
-  margin:auto;
-  background:#1e293b;
-  padding:20px;
-  border-radius:12px;
-  min-height:300px;
-}
-
-input{
-  width:70%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-}
-
-button{
-  padding:10px 20px;
-  border:none;
-  border-radius:8px;
-  background:#22c55e;
-  color:white;
-  cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<h1>Asistente ABP Ciencias de la Computación</h1>
-
-<div id="chat"></div>
-
-<br>
-
-<input id="msg" placeholder="Escribe tu pregunta">
-<button onclick="send()">Enviar</button>
+<button onclick="testBackend()">Probar conexión</button>
 
 <script>
-async function send(){
-  const msg = document.getElementById("msg").value;
-
-  const res = await fetch("https://ebi-abp-creador-de-proyectos-tecnologicos.onrender.com",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:msg})
-  });
-
-  const data = await res.json();
-
-  document.getElementById("chat").innerHTML +=
-  "<p><b>Tú:</b> "+msg+"</p>" +
-  "<p><b>GPT:</b> "+data.reply+"</p>";
+async function testBackend(){
+  try{
+    const res = await fetch("https://ebi-abp-creador-de-proyectos-tecnologicos.onrender.com/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message:"Hola, prueba de conexión"})
+    });
+    const data = await res.json();
+    alert(JSON.stringify(data, null, 2));
+  }catch(e){
+    alert("Error: " + e.message);
+  }
 }
 </script>
-
-</body>
-</html>
