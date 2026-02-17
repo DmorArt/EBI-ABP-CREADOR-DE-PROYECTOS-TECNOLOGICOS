@@ -18,6 +18,7 @@ app.post("/chat", async (req,res)=>{
     const { message } = req.body;
 
     const response = await client.responses.create({
+      model: "gpt-5.2",   // ← ESTE ERA EL ERROR
       assistant_id: process.env.ASSISTANT_ID,
       input: message
     });
