@@ -30,4 +30,89 @@ body{
 
 .msg{
     margin:10px 0;
-    padding:10px
+    padding:10px;
+    border-radius:10px;
+}
+
+.user{
+    background:#065f46;
+}
+
+.bot{
+    background:#1e40af;
+}
+
+input{
+    width:70%;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    background:#22c55e;
+    color:white;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="contenedor">
+<h1>Asistente ABP Ciencias de la Computación</h1>
+
+<div id="chat"></div>
+<br>
+
+<input id="mensaje" placeholder="Escribe tu mensaje">
+<button onclick="enviar()">Enviar</button>
+
+</div>
+
+<script>
+
+const BACKEND = "https://ebi-abp-creador-de-proyectos-tecnologicos.onrender.com";
+
+function agregar(texto, tipo){
+    const div = document.createElement("div");
+    div.className = "msg " + tipo;
+    div.textContent = texto;
+    document.getElementById("chat").appendChild(div);
+}
+
+async function enviar(){
+
+    const msg = document.getElementById("mensaje").value;
+    if(!msg) return;
+
+    agregar("Tú: " + msg, "user");
+    document.getElementById("mensaje").value="";
+
+    try{
+
+        const res = await fetch(BACKEND + "/chat",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({message:msg})
+        });
+
+        const data = await res.json();
+
+        agregar("GPT: " + data.reply, "bot");
+
+    }catch(e){
+        agregar("Error conectando al servidor", "bot");
+    }
+
+}
+
+</script>
+
+</body>
+</html>
